@@ -22,7 +22,8 @@ import com.sam.reactivemongorecipeapplication.converters.UnitOfMeasureToUnitOfMe
 import com.sam.reactivemongorecipeapplication.domain.Ingredient;
 import com.sam.reactivemongorecipeapplication.domain.Recipe;
 import com.sam.reactivemongorecipeapplication.repositories.RecipeRepository;
-import com.sam.reactivemongorecipeapplication.repositories.UnitOfMeasureRepository;
+import com.sam.reactivemongorecipeapplication.repositories.reactive.RecipeReactiveRepository;
+import com.sam.reactivemongorecipeapplication.repositories.reactive.UnitOfMeasureReactiveRepository;
 
 public class IngredientServiceImplTest {
 
@@ -30,10 +31,13 @@ public class IngredientServiceImplTest {
     private final IngredientCommandToIngredient ingredientCommandToIngredient;
 
     @Mock
+    RecipeReactiveRepository recipeReactiveRepository;
+
+    @Mock
     RecipeRepository recipeRepository;
 
     @Mock
-    UnitOfMeasureRepository unitOfMeasureRepository;
+    UnitOfMeasureReactiveRepository unitOfMeasureRepository;
 
     IngredientService ingredientService;
 
@@ -48,7 +52,7 @@ public class IngredientServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, ingredientCommandToIngredient,
-                recipeRepository, unitOfMeasureRepository);
+                recipeReactiveRepository, recipeRepository, unitOfMeasureRepository);
     }
 
     @Test
@@ -78,7 +82,7 @@ public class IngredientServiceImplTest {
         when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
 
         //then
-        IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId("1", "3");
+        IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId("1", "3").block();
 
         //when
         assertEquals("3", ingredientCommand.getId());
@@ -103,7 +107,7 @@ public class IngredientServiceImplTest {
         when(recipeRepository.save(any())).thenReturn(savedRecipe);
 
         //when
-        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command);
+        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).block();
 
         //then
         assertEquals("3", savedCommand.getId());

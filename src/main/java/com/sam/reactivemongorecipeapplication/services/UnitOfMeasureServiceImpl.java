@@ -5,31 +5,42 @@ import org.springframework.stereotype.Service;
 import com.sam.reactivemongorecipeapplication.commands.UnitOfMeasureCommand;
 import com.sam.reactivemongorecipeapplication.converters.UnitOfMeasureToUnitOfMeasureCommand;
 import com.sam.reactivemongorecipeapplication.repositories.UnitOfMeasureRepository;
+import com.sam.reactivemongorecipeapplication.repositories.reactive.UnitOfMeasureReactiveRepository;
 
-import java.util.Set;
+import reactor.core.publisher.Flux;
+
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * Created by jt on 6/28/17.
- */
+
 @Service
 public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
-    private final UnitOfMeasureRepository unitOfMeasureRepository;
+    private final UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
     private final UnitOfMeasureToUnitOfMeasureCommand unitOfMeasureToUnitOfMeasureCommand;
 
-    public UnitOfMeasureServiceImpl(UnitOfMeasureRepository unitOfMeasureRepository, UnitOfMeasureToUnitOfMeasureCommand unitOfMeasureToUnitOfMeasureCommand) {
-        this.unitOfMeasureRepository = unitOfMeasureRepository;
-        this.unitOfMeasureToUnitOfMeasureCommand = unitOfMeasureToUnitOfMeasureCommand;
-    }
+    
 
-    @Override
-    public Set<UnitOfMeasureCommand> listAllUoms() {
+    public UnitOfMeasureServiceImpl(UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository,
+			UnitOfMeasureToUnitOfMeasureCommand unitOfMeasureToUnitOfMeasureCommand) {
+		super();
+		this.unitOfMeasureReactiveRepository = unitOfMeasureReactiveRepository;
+		this.unitOfMeasureToUnitOfMeasureCommand = unitOfMeasureToUnitOfMeasureCommand;
+	}
 
-        return StreamSupport.stream(unitOfMeasureRepository.findAll()
-                .spliterator(), false)
-                .map(unitOfMeasureToUnitOfMeasureCommand::convert)
-                .collect(Collectors.toSet());
+
+
+	@Override
+    public Flux<UnitOfMeasureCommand> listAllUoms() {
+    	
+    	
+    	return unitOfMeasureReactiveRepository
+                .findAll()
+                .map(unitOfMeasureToUnitOfMeasureCommand::convert);
+
+//        return StreamSupport.stream(unitOfMeasureRepository.findAll()
+//                .spliterator(), false)
+//                .map(unitOfMeasureToUnitOfMeasureCommand::convert)
+//                .collect(Collectors.toSet());
     }
 }
