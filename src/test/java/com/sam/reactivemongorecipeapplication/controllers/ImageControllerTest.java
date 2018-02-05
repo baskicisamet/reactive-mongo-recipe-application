@@ -25,6 +25,8 @@ import com.sam.reactivemongorecipeapplication.commands.RecipeCommand;
 import com.sam.reactivemongorecipeapplication.services.ImageService;
 import com.sam.reactivemongorecipeapplication.services.RecipeService;
 
+import reactor.core.publisher.Mono;
+
 public class ImageControllerTest {
 
     @Mock
@@ -53,7 +55,7 @@ public class ImageControllerTest {
         RecipeCommand command = new RecipeCommand();
         command.setId("1");
 
-        when(recipeService.findCommandById(anyString())).thenReturn(command);
+        when(recipeService.findCommandById(anyString())).thenReturn(Mono.just(command));
 
         //when
         mockMvc.perform(get("/recipe/1/image"))
@@ -96,7 +98,7 @@ public class ImageControllerTest {
 
         command.setImage(bytesBoxed);
 
-        when(recipeService.findCommandById(anyString())).thenReturn(command);
+        when(recipeService.findCommandById(anyString())).thenReturn(Mono.just(command));
 
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/recipe/1/recipeimage"))
