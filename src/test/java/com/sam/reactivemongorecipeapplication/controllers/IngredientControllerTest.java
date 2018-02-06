@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.HashSet;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,6 +32,7 @@ import com.sam.reactivemongorecipeapplication.services.UnitOfMeasureService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Ignore
 public class IngredientControllerTest {
 
     @Mock
