@@ -1,31 +1,38 @@
 package com.sam.reactivemongorecipeapplication.controllers;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.sam.reactivemongorecipeapplication.commands.RecipeCommand;
-import com.sam.reactivemongorecipeapplication.exceptions.NotFoundException;
 import com.sam.reactivemongorecipeapplication.services.RecipeService;
 
-import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * Created by jt on 6/19/17.
- */
 @Slf4j
 @Controller
 public class RecipeController {
 
     private static final String RECIPE_RECIPEFORM_URL = "recipe/recipeform";
     private final RecipeService recipeService;
+    
+    private WebDataBinder webDataBinder;
 
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
+    }
+    
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {
+    	this.webDataBinder = webDataBinder;
     }
 
     @GetMapping("/recipe/{id}/show")
@@ -50,7 +57,10 @@ public class RecipeController {
     }
 
     @PostMapping("recipe")
-    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand command, BindingResult bindingResult){
+    public String saveOrUpdate(@ModelAttribute("recipe") RecipeCommand command){
+    	
+    	webDataBinder.validate(); //its equals '@Valid'
+    	BindingResult bindingResult = webDataBinder.getBindingResult();
 
         if(bindingResult.hasErrors()){
 
